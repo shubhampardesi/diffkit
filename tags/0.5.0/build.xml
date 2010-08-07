@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ author: jpanico
+-->
+
+<project name="diffkit">
+
+	<property name="root.dir" location="." />
+	<property name="src.dir" location="${root.dir}/src" />
+	<property name="lib.dir" location="${root.dir}/lib" />
+	<property name="conf.dir" location="${root.dir}/conf" />
+	<property name="build.dir" location="${root.dir}/build" />
+	<property name="run.dir" location="${root.dir}/run" />
+	<property name="dist.dir" location="${root.dir}/dist" />
+	<property name="dist.properties.file" location="${conf.dir}/dist.properties" />
+
+	<patternset id="build.resources">
+		<include name="**/*.xml" />
+		<include name="**/*.txt" />
+	</patternset>
+
+	<fileset id="libs" dir="${lib.dir}">
+		<include name="*.jar" />
+		<include name="*.zip" />
+	</fileset>
+
+	<path id="build.classpath">
+		<fileset refid="libs" />
+	</path>
+
+	<target name="dist-properties">
+
+		<propertyfile file="${dist.properties.file}">
+			<entry key="version.date" type="date" value="now" pattern="MM/dd/yyyy" />
+		</propertyfile>
+
+		<property file="${dist.properties.file}" />
+	</target>
+
+	<target name="info">
+		<echo>basedir--> ${basedir}</echo>
+		<echo>ant.file--> ${ant.file}</echo>
+		<echo>ant.version--> ${ant.version}</echo>
+		<echo>ant.project.name--> ${ant.project.name}</echo>
+		<echo>ant.java.version--> ${ant.java.version}</echo>
+	</target>
+
+	<target name="build" depends="dist-properties">
+
+		<mkdir dir="${build.dir}" />
+
+		<javac srcdir="${src.dir}" destdir="${build.dir}" verbose="off" classpathref="build.classpath" target="1.6" source="1.6" debug="on" deprecation="off" />
+
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}">
+				<patternset refid="build.resources" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="dist" depends="build">
+
+		<property name="version" value="${version.major}.${version.minor}.${version.patch}" />
+		<property name="libjar" value="${ant.project.name}-${version}.jar" />
+		<property name="appjar" value="${ant.project.name}-app.jar" />
+		<property name="distzip" value="${ant.project.name}-${version}.zip" />
+
+		<mkdir dir="${dist.dir}" />
+
+		<!-- create the diffkit library as jar -->
+		<jar destfile="${dist.dir}/${libjar}" basedir="${build.dir}" includes="org/diffkit/**/**" excludes="**/DKLauncher**" />
+
+		<copy todir="${dist.dir}">
+			<fileset dir="${build.dir}">
+				<include name="com/jdotsoft/**/**" />
+				<include name="org/diffkit/**/DKLauncher*" />
+			</fileset>
+		</copy>
+
+		<copy todir="${dist.dir}/lib">
+			<fileset dir="${lib.dir}" />
+		</copy>
+
+		<copy todir="${dist.dir}/conf">
+			<fileset dir="${conf.dir}" />
+		</copy>
+
+		<!-- create the diffkit standalone application that includes diffkit library and all its dependencies -->
+		<jar destfile="${dist.dir}/${appjar}" basedir="${dist.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="org.diffkit.diff.conf.DKLauncher" />
+			</manifest>
+		</jar>
+
+		<!-- cleanup -->
+		<delete includeemptydirs="true">
+			<fileset dir="${dist.dir}" excludes="${appjar}" />
+		</delete>
+
+		<zip destfile="${dist.dir}/${distzip}" basedir="${dist.dir}" />
+
+		<!-- cleanup -->
+		<delete includeemptydirs="true">
+			<fileset dir="${dist.dir}" excludes="${distzip}" />
+		</delete>
+
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" includeEmptyDirs="true" failonerror="false" />
+		<delete dir="${run.dir}" includeEmptyDirs="true" failonerror="false" />
+		<delete dir="${dist.dir}" includeEmptyDirs="true" failonerror="false" />
+	</target>
+
+</project>
