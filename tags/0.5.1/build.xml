@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ author: jpanico
+-->
+
+<project name="diffkit">
+
+	<property name="root.dir" location="." />
+	<property name="src.dir" location="${root.dir}/src" />
+	<property name="tst.dir" location="${root.dir}/tst" />
+	<property name="lib.dir" location="${root.dir}/lib" />
+	<property name="conf.dir" location="${root.dir}/conf" />
+	<property name="doc.dir" location="${root.dir}/doc" />
+	<property name="build.dir" location="${root.dir}/build" />
+	<property name="run.dir" location="${root.dir}/run" />
+	<property name="tstscratch.dir" location="${root.dir}/tstscratch" />
+	<property name="dist.dir" location="${root.dir}/dist" />
+	<property name="dist.properties.file" location="${conf.dir}/dist.properties" />
+
+	<patternset id="build.resources">
+		<include name="**/*.xml" />
+		<include name="**/*.txt" />
+		<include name="**/*.csv" />
+		<include name="**/*.diff" />
+	</patternset>
+
+	<patternset id="executables">
+		<include name="**/*.class" />
+	</patternset>
+
+	<fileset id="libs" dir="${lib.dir}">
+		<include name="*.jar" />
+		<include name="*.zip" />
+	</fileset>
+
+	<path id="build.classpath">
+		<fileset refid="libs" />
+	</path>
+
+	<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="build.classpath" />
+
+	<!-- why doesn't this work ?? -->
+	<defaultexcludes echo="false" add="**/*.__hold__" />
+
+	<target name="dist-properties">
+
+		<propertyfile file="${dist.properties.file}">
+			<entry key="version.date" type="date" value="now" pattern="MM/dd/yyyy" />
+		</propertyfile>
+
+		<property file="${dist.properties.file}" />
+
+		<property name="version" value="${version.major}.${version.minor}.${version.micro}" />
+		<property name="bin-distzip" value="${ant.project.name}-${version}.zip" />
+		<property name="src-distzip" value="${ant.project.name}-src-${version}.zip" />
+	</target>
+
+	<target name="info">
+		<echo>basedir--> ${basedir}</echo>
+		<echo>ant.file--> ${ant.file}</echo>
+		<echo>ant.version--> ${ant.version}</echo>
+		<echo>ant.project.name--> ${ant.project.name}</echo>
+		<echo>ant.java.version--> ${ant.java.version}</echo>
+	</target>
+
+	<target name="build" depends="dist-properties">
+
+		<mkdir dir="${build.dir}" />
+
+		<groovyc destdir="${build.dir}" classpathref="build.classpath" verbose="off">
+			<src path="${src.dir}" />
+			<javac target="1.6" source="1.6" debug="on" deprecation="off/" />
+		</groovyc>
+
+		<groovyc destdir="${build.dir}" classpathref="build.classpath" verbose="off">
+			<src path="${tst.dir}" />
+			<include name="**/testcase/**" />
+			<include name="**/DBTestSetup*" />
+			<javac target="1.6" source="1.6" debug="on" deprecation="off/" />
+		</groovyc>
+
+		<copy todir="${build.dir}">
+			<fileset dir="${src.dir}">
+				<patternset refid="build.resources" />
+			</fileset>
+
+			<fileset dir="${tst.dir}">
+				<include name="**/testcase/**" />
+				<exclude name="**/testcaserunner*" />
+				<exclude name="**/*.groovy" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="dist" depends="dist-properties">
+		<antcall target="bin-dist" />
+		<move file="${dist.dir}/${bin-distzip}" tofile="${dist.dir}/${bin-distzip}.__hold__" />
+		<antcall target="src-dist" />
+		<move file="${dist.dir}/${bin-distzip}.__hold__" tofile="${dist.dir}/${bin-distzip}" />
+	</target>
+
+	<target name="bin-dist" depends="clean,build">
+
+		<property name="testcasedatajar" value="testcasedata.jar" />
+		<property name="libjar" value="${ant.project.name}-${version}.jar" />
+		<property name="appjar" value="${ant.project.name}-app.jar" />
+
+		<mkdir dir="${dist.dir}" />
+
+		<copy todir="${dist.dir}">
+			<fileset dir="${build.dir}">
+				<include name="org/diffkit/**/*.class" />
+				<exclude name="**/DKLauncher**" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${dist.dir}/testcasedata" />
+		<copy todir="${dist.dir}/testcasedata" flatten="true">
+			<fileset dir="${build.dir}/org/diffkit/diff/testcase/">
+				<patternset refid="build.resources" />
+			</fileset>
+		</copy>
+		<!-- jar up TestCase resources -->
+		<jar destfile="${dist.dir}/org/diffkit/diff/testcase/${testcasedatajar}">
+			<fileset dir="${dist.dir}/testcasedata/" />
+		</jar>
+
+		<!-- create the diffkit library as jar -->
+		<jar destfile="${dist.dir}/${libjar}" basedir="${dist.dir}" excludes="testcasedata/" />
+
+		<!-- cleanup -->
+		<delete includeemptydirs="true">
+			<fileset dir="${dist.dir}" excludes="${libjar}" />
+		</delete>
+
+		<copy todir="${dist.dir}">
+			<fileset dir="${build.dir}">
+				<include name="com/jdotsoft/**/**" />
+				<include name="org/diffkit/**/DKLauncher*" />
+			</fileset>
+		</copy>
+
+		<copy todir="${dist.dir}/lib">
+			<fileset dir="${lib.dir}" />
+		</copy>
+
+		<copy todir="${dist.dir}/conf">
+			<fileset dir="${conf.dir}">
+			</fileset>
+		</copy>
+
+		<!-- create the diffkit standalone application that includes diffkit library and all its dependencies -->
+		<jar destfile="${dist.dir}/${appjar}" basedir="${dist.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="org.diffkit.diff.conf.DKLauncher" />
+			</manifest>
+		</jar>
+
+		<!-- cleanup -->
+		<delete includeemptydirs="true">
+			<fileset dir="${dist.dir}" excludes="${appjar},${testcasedatajar}" />
+		</delete>
+
+		<copy todir="${dist.dir}/conf">
+			<fileset dir="${conf.dir}">
+				<include name="**/logback.xml" />
+			</fileset>
+		</copy>
+
+		<copy todir="${dist.dir}/doc">
+			<fileset dir="${doc.dir}" />
+		</copy>
+
+		<zip destfile="${dist.dir}/${bin-distzip}" basedir="${dist.dir}" />
+
+		<!-- cleanup -->
+		<delete includeemptydirs="true">
+			<fileset dir="${dist.dir}" excludes="${bin-distzip}" />
+		</delete>
+
+	</target>
+
+	<target name="src-dist" depends="clean,dist-properties">
+
+		<mkdir dir="${dist.dir}" />
+
+		<copy todir="${dist.dir}">
+			<fileset dir="${root.dir}">
+				<include name=".classpath" />
+				<include name=".project" />
+				<include name=".settings" />
+				<include name="build.xml" />
+				<include name="conf/**" />
+				<include name="doc/**" />
+				<include name="lib/**" />
+				<include name="src/**" />
+				<include name="tst/**" />
+			</fileset>
+		</copy>
+
+		<zip destfile="${dist.dir}/${src-distzip}" basedir="${dist.dir}" />
+
+		<!-- cleanup -->
+		<delete includeemptydirs="true">
+			<fileset dir="${dist.dir}" excludes="*.zip" />
+		</delete>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" includeEmptyDirs="true" failonerror="false" />
+		<delete dir="${run.dir}" includeEmptyDirs="true" failonerror="false" />
+		<delete dir="${dist.dir}" includeEmptyDirs="true" failonerror="false">
+			<exclude name="*.__hold__" />
+		</delete>
+		<!-- clean up scratch files created by Unit tests and TCR -->
+		<delete>
+			<fileset dir="${root.dir}" includes="*.diff" />
+		</delete>
+		<delete includeemptydirs="true">
+			<fileset dir="${root.dir}" includes="tcr*/**" />
+		</delete>
+		<delete includeemptydirs="true" failonerror="false">
+			<fileset dir="${tstscratch.dir}" />
+		</delete>
+	</target>
+
+</project>
