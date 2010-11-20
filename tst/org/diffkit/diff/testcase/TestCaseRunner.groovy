@@ -68,7 +68,7 @@ public class TestCaseRunner implements Runnable {
    public static final String TEST18_RHS_TARGET_DATABASE = "mem:testcase18_rhs;DB_CLOSE_DELAY=-1"
    public static final String TEST_CASE_PLAN_FILE_PATTERN = 'test(\\d*)\\.plan\\.xml'
    public static final DKRegexFilenameFilter TEST_CASE_PLAN_FILTER = new DKRegexFilenameFilter(TEST_CASE_PLAN_FILE_PATTERN);
-   private static final List TEST_CASE_DATA_SUFFIXES = ['xml', 'diff', 'csv', 'txt', 'exception']
+   private static final List TEST_CASE_DATA_SUFFIXES = ['xml', 'diff', 'csv', 'txt', 'exception', 'xls', 'xlsx']
    private static final FileFilter TEST_CASE_DATA_FILTER = new SuffixFileFilter(TEST_CASE_DATA_SUFFIXES)
    private static final String TEST_CASE_DATA_ARCHIVE_NAME = "testcasedata.jar"
    
