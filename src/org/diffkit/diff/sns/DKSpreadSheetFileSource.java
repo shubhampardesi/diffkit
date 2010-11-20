@@ -96,7 +96,7 @@ public class DKSpreadSheetFileSource implements DKSource {
     */
    public DKSpreadSheetFileSource(String filePath_, DKTableModel model_, String[] keyColumnNames_,
                        int[] readColumnIdxs_, boolean isSorted_,
-                       boolean validateLazily_, String excelSheetName_) throws IOException {
+                       boolean validateLazily_, String sheetName_) throws IOException {
 
       _log.debug("filePath_->{}", filePath_);
       _log.debug("model_->{}", model_);
@@ -104,7 +104,7 @@ public class DKSpreadSheetFileSource implements DKSource {
       _log.debug("readColumnIdxs_->{}", readColumnIdxs_);
       _log.debug("isSorted_->{}", isSorted_);
       _log.debug("validateLazily_->{}", validateLazily_);
-      _log.debug("excelSheetName_->{}", excelSheetName_);
+      _log.debug("excelSheetName_->{}", sheetName_);
 
       if ((model_ != null) && (keyColumnNames_ != null))
          throw new RuntimeException(String.format("does not allow both %s and %s params",
@@ -120,7 +120,7 @@ public class DKSpreadSheetFileSource implements DKSource {
 
       _isSorted = isSorted_;
       _validateLazily = validateLazily_;
-      _sheetName = excelSheetName_;
+      _sheetName = sheetName_;
       if (!_isSorted)
          throw new NotImplementedException(String.format(
             "isSorted_->%s is not currently supported", _isSorted));
@@ -219,6 +219,7 @@ public class DKSpreadSheetFileSource implements DKSource {
          if (_lineCounter == _totalRows)
             return null;
          Row row = _sheet.getRow((int)_lineCounter);
+         _log.debug("row:"+ row);
          if(row == null)
         	 return null;
          Cell[] cells = getCells(row);        	 
@@ -233,11 +234,15 @@ public class DKSpreadSheetFileSource implements DKSource {
 	   Iterator<Cell> iterator = row.cellIterator();
 	   if (iterator == null)
 		   return null;
+	   _log.debug("No of Cells:" + row.getLastCellNum());
 	   Cell[] cells = new Cell[row.getLastCellNum()];
 	   int i=0;
 	   while(iterator.hasNext()) {
-		   cells[i++] = iterator.next();
+		   Cell cell = iterator.next();
+		   _log.debug("Cell->", cell);
+		   cells[i++] = cell;
 	   }
+	   _log.debug("Cells->{}", cells);
 	   return cells;
    }
    
@@ -373,13 +378,11 @@ public class DKSpreadSheetFileSource implements DKSource {
       }
       _headerColumnNames = new String[headerCells.length];
       for(int i=0; i<headerCells.length; i++) {
-    	  if(headerCells[i] != null) {
-    		  if(headerCells[i].getCellType() == Cell.CELL_TYPE_NUMERIC)
-    		  _headerColumnNames[i] = headerCells[i].getStringCellValue();
-    	  } else {
-    		  _log.error("no header for header index:" + i);
-    	  }
+    	 _headerColumnNames[i] = getCellValue(headerCells[i]);    		  
+    	 if(_headerColumnNames[i] == null)
+    	    _log.error("no header for header index:" + i);   	  
       }
+      _log.debug("_headerColumnNames->{}", _headerColumnNames);
    }
 
    private void ensureOpen() {
