@@ -30,6 +30,7 @@ import org.diffkit.diff.engine.DKTableModel;
 import org.diffkit.diff.sns.DKDBSource;
 import org.diffkit.diff.sns.DKFileSink;
 import org.diffkit.diff.sns.DKFileSource;
+import org.diffkit.diff.sns.DKSpreadSheetFileSource;
 import org.diffkit.diff.sns.DKWriterSink;
 
 /**
@@ -209,7 +210,44 @@ public class DKMagicPlanRules {
       "groupByColumnNames", "assign groupByColumnNames from Plan to DKFileSink",
       DKFileSink.class, "groupByColumnNames_", "groupByColumnNames", true, new PlanValue(
          false));
+   private static final DKMagicPlanRule LHS_SPREADSHEET_FILE_SOURCE_RULE = new DKMagicPlanRule(
+		      "lhsSpreadSheetFileSource",
+		      "if lhsSpreadSheetFilePath is specified in plan, then force lhsSource to be SpreadSheetFileSource", null,
+		      "lhsSource_", "lhsSpreadSheetFilePath", true, new TypeRefinement(DKSpreadSheetFileSource.class));   
+   private static final DKMagicPlanRule RHS_SPREADSHEET_FILE_SOURCE_RULE = new DKMagicPlanRule(
+		      "rhsSpreadSheetFileSource",
+		      "if rhsSpreadSheetFilePath is specified in plan, then force rhsSource to be SpreadSheetFileSource", null,
+		      "rhsSource_", "rhsSpreadSheetFilePath", true, new TypeRefinement(DKSpreadSheetFileSource.class));   
 
+   private static final DKMagicPlanRule LHS_SPREADSHEET_FILE_PATH_RULE = new DKMagicPlanRule(
+		      "lhsSpreadSheetFilePath",
+		      "if lhsSpreadSheetFilePath is specified in plan, then use it as the filePath_ in the lhsSpreadSheetFileSource",
+		      DKSpreadSheetFileSource.class, "lhsSource_.filePath_", "lhsSpreadSheetFilePath", true,
+		      new PlanValue(true));
+
+   private static final DKMagicPlanRule RHS_SPREADSHEET_FILE_PATH_RULE = new DKMagicPlanRule(
+		      "rhsSpreadSheetFilePath",
+		      "if rhsSpreadSheetFilePath is specified in plan, then use it as the filePath_ in the rhsSpreadSheetFileSource",
+		      DKSpreadSheetFileSource.class, "rhsSource_.filePath_", "rhsSpreadSheetFilePath", true,
+		      new PlanValue(true)); 
+   private static final DKMagicPlanRule IS_SPREADSHEET_SORTED_RULE = new DKMagicPlanRule("isSorted",
+		      "hardwire isSorted to true", DKSpreadSheetFileSource.class, "isSorted_", null, true,
+		      new Constant(Boolean.TRUE));
+   private static final DKMagicPlanRule SPREADSHEET_VALIDATE_LAZILY_RULE = new DKMagicPlanRule(
+		      "validateLazily", "hardwire validateLazily to false", DKSpreadSheetFileSource.class,
+		      "validateLazily_", null, true, new Constant(Boolean.FALSE));   
+   private static final DKMagicPlanRule LHS_SPREADSHEET_SHEET_NAME_RULE = new DKMagicPlanRule("lhsSpreadSheetName",
+		      "if lhsSheetName is specified in plan, then use it for lhsSpreadSheetFileSource", DKSpreadSheetFileSource.class,
+		      "lhsSource_.sheetName_", "lhsSpreadSheetName", true, new PlanValue(true));
+   private static final DKMagicPlanRule RHS_SPREADSHEET_SHEET_NAME_RULE = new DKMagicPlanRule("rhsSpreadSheetName",
+		      "if rhsSheetName is specified in plan, then use it for rhsSpreadSheetFileSource", DKSpreadSheetFileSource.class,
+		      "rhsSource_.sheetName_", "rhsSpreadSheetName", true, new PlanValue(true));   
+   private static final DKMagicPlanRule DEFAULT_SPREADSHEET_SHEET_NAME_RULE = new DKMagicPlanRule(
+		      "defaultSheetName_", "if no sheetName is specified in plan, use 'Sheet1'",
+		      DKSpreadSheetFileSource.class, "sheetName_", null, false, new Constant("Sheet1"));   
+
+   
+   
    public static DKMagicPlanRule[] RULES = { LHS_DB_SOURCE_FROM_LHS_DB_TABLE_RULE,
       RHS_DB_SOURCE_FROM_RHS_DB_TABLE_RULE, LHS_DB_SOURCE_FROM_DB_TABLE_RULE,
       RHS_DB_SOURCE_FROM_DB_TABLE_RULE, DB_TABLE_NAME_RULE, LHS_DB_TABLE_NAME_RULE,
@@ -217,13 +255,16 @@ public class DKMagicPlanRules {
       RHS_WHERE_CLAUSE_RULE, DEFAULT_WHERE_CLAUSE_RULE, DB_CONNECTION_INFO_RULE,
       LHS_DB_CONNECTION_INFO_RULE, RHS_DB_CONNECTION_INFO_RULE, MODEL_DEFAULT_RULE,
       KEY_COLUMN_NAMES_RULE, READ_COLUMNS_RULE, LHS_FILE_SOURCE_RULE, LHS_FILE_PATH_RULE,
-      RHS_FILE_SOURCE_RULE, RHS_FILE_PATH_RULE, FILE_SINK_RULE, FILE_SINK_PATH_RULE,
+      RHS_FILE_SOURCE_RULE, RHS_FILE_PATH_RULE,LHS_SPREADSHEET_FILE_SOURCE_RULE, RHS_SPREADSHEET_FILE_SOURCE_RULE,
+      LHS_SPREADSHEET_FILE_PATH_RULE, RHS_SPREADSHEET_FILE_PATH_RULE, FILE_SINK_RULE, FILE_SINK_PATH_RULE,
       DEFAULT_SINK_RULE, AUTOMATIC_TABLE_COMPARISON_RULE, DELIMITER_RULE,
       DEFAULT_DELIMITER_RULE, IS_SORTED_RULE, VALIDATE_LAZILY_RULE, DIFF_KIND_RULE,
       DEFAULT_DIFF_KIND_RULE, DIFF_COLUMN_NAMES_RULE, IGNORE_COLUMN_NAMES_RULE,
       DISPLAY_COLUMN_NAMES_RULE, MAX_DIFFS_RULE, DEFAULT_MAX_DIFFS_RULE,
       NUMBER_TOLERANCE_RULE, TOLERANCE_MAP_RULE, WITH_SUMMARY_RULE,
-      DEFAULT_WITH_SUMMARY_RULE, GROUP_BY_COLUMN_NAMES_RULE };
+      DEFAULT_WITH_SUMMARY_RULE, GROUP_BY_COLUMN_NAMES_RULE, IS_SPREADSHEET_SORTED_RULE,
+      LHS_SPREADSHEET_SHEET_NAME_RULE, RHS_SPREADSHEET_SHEET_NAME_RULE, DEFAULT_SPREADSHEET_SHEET_NAME_RULE,
+      SPREADSHEET_VALIDATE_LAZILY_RULE};
 
    private static class TypeRefinement<T> extends RuleImplementation {
       private final Class<T> _type;
