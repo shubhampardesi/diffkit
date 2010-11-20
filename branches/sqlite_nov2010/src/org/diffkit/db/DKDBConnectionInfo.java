@@ -42,7 +42,7 @@ public class DKDBConnectionInfo {
       _username = username_;
       _password = password_;
 
-      DKValidate.notNull(_name, _flavor, _database, _username, _password);
+      DKValidate.notNull(_name, _flavor, _database);
    }
 
    public String getName() {
@@ -79,6 +79,8 @@ public class DKDBConnectionInfo {
          return this.getSQLServerUrl();
       case POSTGRES:
          return this.getPostgresUrl();
+      case SQLITE:
+         return this.getSQLiteUrl();
 
       default:
          throw new NotImplementedException();
@@ -117,6 +119,11 @@ public class DKDBConnectionInfo {
    // jdbc:postgresql://<host>[:<port>]/<database_name>
    private String getPostgresUrl() {
       return String.format("jdbc:postgresql://%s:%s/%s", _host, _port, _database);
+   }
+
+   // jdbc:sqlite:<path to database file>
+   private String getSQLiteUrl() {
+      return String.format("jdbc:sqlite:%s", _database);
    }
 
    public String getUsername() {

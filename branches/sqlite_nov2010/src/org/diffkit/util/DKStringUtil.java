@@ -51,9 +51,11 @@ public class DKStringUtil {
    public static Boolean parseBoolean(String target_) {
       if (target_ == null)
          return null;
-      if ((target_.equalsIgnoreCase("true")) || (target_.equalsIgnoreCase("yes")))
+      if ((target_.equalsIgnoreCase("true")) || (target_.equalsIgnoreCase("yes"))
+         || (target_.equalsIgnoreCase("Y")))
          return Boolean.TRUE;
-      if ((target_.equalsIgnoreCase("false")) || (target_.equalsIgnoreCase("no")))
+      if ((target_.equalsIgnoreCase("false")) || (target_.equalsIgnoreCase("no"))
+         || (target_.equalsIgnoreCase("N")))
          return Boolean.FALSE;
       return null;
    }
