@@ -169,10 +169,13 @@ public class DKDBTableDataAccess {
       Collections.sort(pkMaps, ordinalComparator);
       String pkName = (String) pkMaps.get(0).get("PK_NAME");
       _log.debug("pkName->{}", pkName);
+      // sqlite jdbc adapter is not retrieving pk names
+      pkName = pkName != null ? pkName : "";
       String[] keyColumnNames = new String[pkMaps.size()];
       for (int i = 0; i < pkMaps.size(); i++) {
          Map pkMap = pkMaps.get(i);
          String mapName = (String) pkMap.get("PK_NAME");
+         mapName = mapName != null ? mapName : "";
          if (!mapName.equals(pkName))
             throw new RuntimeException(String.format("more than one pkName->%s, %s",
                pkName, mapName));

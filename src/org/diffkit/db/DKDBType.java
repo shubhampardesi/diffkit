@@ -67,7 +67,8 @@ public enum DKDBType {
       true), _POSTGRES_TXID_SNAPSHOT, _POSTGRES_CSTRING(true), _POSTGRES_ANY, _POSTGRES_ANYARRAY(
       true), _POSTGRES_VOID, _POSTGRES_INTERNAL(true), _POSTGRES_ANYELEMENT(true), _POSTGRES_ANYNONARRAY(
       true), _POSTGRES_ANYENUM(true), _POSTGRES_INTERVAL, _POSTGRES_RECORD(true), _POSTGRES_CARDINAL_NUMBER(
-      true), _POSTGRES_CHARACTER_DATA(true), _POSTGRES_SQL_IDENTIFIER(true);
+      true), _POSTGRES_CHARACTER_DATA(true), _POSTGRES_SQL_IDENTIFIER(true), _SQLITE_TEXT(
+      true);
 
    private static final String LENGTH_SPECIFIER_PATTERN = "\\(\\d*\\)";
    private static final Map<DKDBFlavor, Map<DKDBType, DKDBType>> _typeRemappings;
@@ -114,6 +115,15 @@ public enum DKDBType {
       postgresMap.put(BOOLEAN, _POSTGRES_BOOL);
       postgresMap.put(CLOB, _POSTGRES_TEXT);
       _typeRemappings.put(DKDBFlavor.POSTGRES, postgresMap);
+      // SQLite
+      Map<DKDBType, DKDBType> sqliteMap = new HashMap<DKDBType, DKDBType>();
+      sqliteMap.put(BIGINT, INTEGER);
+      sqliteMap.put(TINYINT, INTEGER);
+      sqliteMap.put(SMALLINT, INTEGER);
+      sqliteMap.put(DOUBLE, REAL);
+      sqliteMap.put(VARCHAR, _SQLITE_TEXT);
+      sqliteMap.put(CLOB, _SQLITE_TEXT);
+      _typeRemappings.put(DKDBFlavor.SQLITE, sqliteMap);
    }
 
    /**
@@ -271,6 +281,8 @@ public enum DKDBType {
       case _POSTGRES_TEXT:
          return WriteType.STRING;
       case _POSTGRES_BPCHAR:
+         return WriteType.STRING;
+      case _SQLITE_TEXT:
          return WriteType.STRING;
       case DATE:
          return WriteType.DATE;

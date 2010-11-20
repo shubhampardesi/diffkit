@@ -38,6 +38,23 @@ import groovy.util.GroovyTestCase;
  */
 public class TestVolatileStuff extends GroovyTestCase {
    
+   public void testSQLite(){
+   }
+   
+   public void testSqlite(){
+      DKDBConnectionInfo connectionInfo = new DKDBConnectionInfo('sqlite', DKDBFlavor.SQLITE,'/Users/joe/Develope/sqlite_test_db/test.db', null, null, null, null)
+      println "connectionInfo->$connectionInfo"
+      DKDatabase database = [connectionInfo]
+      def connection = database.connection
+      println "connection->$connection"
+      assert connection
+      DKDBTableDataAccess tableDataAccess = [database]
+      println "tableDataAccess->$tableDataAccess"
+      assert ! database.supportsType('VARCHAR')
+      assert database.supportsType('INTEGER')
+      assert !database.supportsType('NUMERIC')
+   }
+   
    public void tXstPostgres(){
       DKDBConnectionInfo connectionInfo = ['postgres', DKDBFlavor.POSTGRES,'postgres', 'localhost', 5432, 'postgres', 'torabora']
       println "connectionInfo->$connectionInfo"

@@ -70,8 +70,12 @@ public class DKDatabase {
       String jdbcUrl = _connectionInfo.getJDBCUrl();
       _log.debug("jdbcUrl->{}", jdbcUrl);
       Properties properties = new Properties();
-      properties.put(USERNAME_KEY, _connectionInfo.getUsername());
-      properties.put(PASSWORD_KEY, _connectionInfo.getPassword());
+      String username = _connectionInfo.getUsername();
+      String password = _connectionInfo.getPassword();
+      if (username != null)
+         properties.put(USERNAME_KEY, username);
+      if (password != null)
+         properties.put(PASSWORD_KEY, password);
       return DriverManager.getConnection(jdbcUrl, properties);
    }
 

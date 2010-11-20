@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+
+	<bean id="rhsDBConnectionInfo" class="org.diffkit.db.DKDBConnectionInfo">
+      <constructor-arg index="0" value="sqlite" />
+      <constructor-arg index="1" value="SQLITE" />
+      <constructor-arg index="2" value="/Users/joe/Develope/sqlite_test_db/test.db" />
+      <constructor-arg index="3"><null/></constructor-arg>
+      <constructor-arg index="4"><null/></constructor-arg>
+      <constructor-arg index="5"><null/></constructor-arg>
+      <constructor-arg index="6"><null/></constructor-arg>
+	</bean>
+
+</beans>
