@@ -244,7 +244,7 @@ public class DKMagicPlanRules {
 		      "rhsSource_.sheetName_", "rhsSpreadSheetName", true, new PlanValue(true));   
    private static final DKMagicPlanRule DEFAULT_SPREADSHEET_SHEET_NAME_RULE = new DKMagicPlanRule(
 		      "defaultSheetName_", "if no sheetName is specified in plan, use 'Sheet1'",
-		      DKSpreadSheetFileSource.class, "sheetName_", null, false, new Constant("Sheet1"));   
+		      DKSpreadSheetFileSource.class, "sheetName_", null, false, new Constant(null));   
 
    
    
