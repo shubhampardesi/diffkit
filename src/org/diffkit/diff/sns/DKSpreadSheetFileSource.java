@@ -89,6 +89,14 @@ public class DKSpreadSheetFileSource implements DKSource {
       this(filePath_, model_, null, readColumnIdxs_, true, true,excelSheetName_);
    }
 
+   public DKSpreadSheetFileSource(String filePath_, DKTableModel model_, String[] keyColumnNames_,
+           int[] readColumnIdxs_, boolean isSorted_,
+           boolean validateLazily_) throws IOException {
+	   this(filePath_,  model_,  keyColumnNames_,
+	            readColumnIdxs_,  isSorted_,
+	            validateLazily_,  null);
+   }
+   
    /**
     * @param readColumnIdxs_
     *           instructs Source to only read a subset of columns. null value
@@ -104,7 +112,7 @@ public class DKSpreadSheetFileSource implements DKSource {
       _log.debug("readColumnIdxs_->{}", readColumnIdxs_);
       _log.debug("isSorted_->{}", isSorted_);
       _log.debug("validateLazily_->{}", validateLazily_);
-      _log.debug("excelSheetName_->{}", sheetName_);
+      _log.debug("sheetName_->{}", sheetName_);
 
       if ((model_ != null) && (keyColumnNames_ != null))
          throw new RuntimeException(String.format("does not allow both %s and %s params",
@@ -359,11 +367,20 @@ public class DKSpreadSheetFileSource implements DKSource {
       if (workbook == null) {
          _log.error("couldn't get Workbook for file: " + _file);
       }
-      _sheet = workbook.getSheet(_sheetName);
-      _log.info("_excelSheet: " + _sheet);
-      if (_sheet == null) {
-         _log.error("couldn't find sheet named: " + _sheetName);
+      if(_sheetName != null && _sheetName.trim().equals("")) {
+         _sheet = workbook.getSheet(_sheetName);
+         if (_sheet == null) {
+             throw new RuntimeException("Could not open spreadsheet with name:" + _sheetName);
+          }
+      } else {
+    	  _log.info("No sheetName specified. Opening the first sheet");
+    	  _sheet = workbook.getSheetAt(0);
+          if (_sheet == null) {
+        	  throw new RuntimeException("No sheetName specified and Could not open the first sheet");
+           }
       }
+      _log.info("_sheet: " + _sheet);
+
       _totalRows = _sheet.getLastRowNum(); 
       _log.info("Total Rows in excel file " + _file.getAbsolutePath() + " : " + _totalRows);
       //_lineReader = new LineNumberReader(new BufferedReader(new FileReader(_file)));
