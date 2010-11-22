@@ -9,7 +9,6 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		<constructor-arg index="0">
 
 			 <list> 
-          <value>26</value> 
           <value>27</value> 
 			 </list>
 		</constructor-arg>
