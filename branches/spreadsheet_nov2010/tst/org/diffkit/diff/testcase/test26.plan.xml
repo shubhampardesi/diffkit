@@ -64,12 +64,12 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 		factory-method="getInstance" />
 
 	<bean id="sink" class="org.diffkit.diff.sns.DKFileSink">
-		<constructor-arg index="0" value="./test27.sink.diff" />
+		<constructor-arg index="0" value="./test26.sink.diff" />
 	</bean>
 
 	<bean id="rhs.source" class="org.diffkit.diff.sns.DKSpreadSheetFileSource">
 		<constructor-arg index="0"
-			value="./test27.rhs.xlsx" />
+			value="./test26.rhs.xlsx" />
 		<constructor-arg index="1" ref="lhs.table.model" />
 		<constructor-arg index="2">
 			<null />
@@ -84,7 +84,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean id="lhs.source" class="org.diffkit.diff.sns.DKSpreadSheetFileSource">
 		<constructor-arg index="0"
-			value="./test27.lhs.xlsx" />
+			value="./test26.lhs.xlsx" />
 		<constructor-arg index="1" ref="lhs.table.model" />
       <constructor-arg index="2">
          <null />
