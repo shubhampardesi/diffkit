@@ -231,8 +231,11 @@ public class DKMagicPlanRules {
 		      DKSpreadSheetFileSource.class, "rhsSource_.filePath_", "rhsSpreadSheetFilePath", true,
 		      new PlanValue(true)); 
    private static final DKMagicPlanRule IS_SPREADSHEET_SORTED_RULE = new DKMagicPlanRule("isSorted",
-		      "hardwire isSorted to true", DKSpreadSheetFileSource.class, "isSorted_", null, true,
-		      new Constant(Boolean.TRUE));
+		      "hardwire isSorted to false", DKSpreadSheetFileSource.class, "isSorted_", null, true,
+		      new Constant(Boolean.FALSE));
+   private static final DKMagicPlanRule SPREADSHEET_HAS_HEADER_RULE = new DKMagicPlanRule("hasHeader",
+		      "hardwire hasHeader to true", DKSpreadSheetFileSource.class, "hasHeader_", null, true,
+		      new Constant(Boolean.TRUE));   
    private static final DKMagicPlanRule SPREADSHEET_VALIDATE_LAZILY_RULE = new DKMagicPlanRule(
 		      "validateLazily", "hardwire validateLazily to false", DKSpreadSheetFileSource.class,
 		      "validateLazily_", null, true, new Constant(Boolean.FALSE));   
@@ -262,7 +265,7 @@ public class DKMagicPlanRules {
       DEFAULT_DIFF_KIND_RULE, DIFF_COLUMN_NAMES_RULE, IGNORE_COLUMN_NAMES_RULE,
       DISPLAY_COLUMN_NAMES_RULE, MAX_DIFFS_RULE, DEFAULT_MAX_DIFFS_RULE,
       NUMBER_TOLERANCE_RULE, TOLERANCE_MAP_RULE, WITH_SUMMARY_RULE,
-      DEFAULT_WITH_SUMMARY_RULE, GROUP_BY_COLUMN_NAMES_RULE, IS_SPREADSHEET_SORTED_RULE,
+      DEFAULT_WITH_SUMMARY_RULE, GROUP_BY_COLUMN_NAMES_RULE, IS_SPREADSHEET_SORTED_RULE,SPREADSHEET_HAS_HEADER_RULE,
       LHS_SPREADSHEET_SHEET_NAME_RULE, RHS_SPREADSHEET_SHEET_NAME_RULE, DEFAULT_SPREADSHEET_SHEET_NAME_RULE,
       SPREADSHEET_VALIDATE_LAZILY_RULE};
 
