@@ -85,6 +85,8 @@ public class DKSpreadSheetFileSource implements DKSource {
    private Sheet _sheet;
    private List<Row> _rows;
    private Row _headerRow;
+   private static final String COLUMN_NAMES[] = {"A","B","C", "D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+   private static final int MAX_DEFAULT_HEADER_COLUMNS = 52;
    //private DKColumnModel[] _columnModels;
    private DataFormatter _dataFormatter = new DataFormatter();
 
@@ -448,15 +450,6 @@ public class DKSpreadSheetFileSource implements DKSource {
    }
    */
 
-   private DKColumnModel[] getReadColumns() {
-      if (_readColumns != null)
-         return _readColumns;
-      DKTableModel model = this.getModel();
-      if (model == null)
-         return null;
-      _readColumns = model.getColumns();
-      return _readColumns;
-   }
 
    public long getLastIndex() {
       return _lastIndex;
@@ -586,10 +579,11 @@ public class DKSpreadSheetFileSource implements DKSource {
    }
 
    private String[] constructDefaultHeader(){
-	   int MAX_DEFAULT_HEADER_COLUMNS = 52;
+
 	   String[] header = new String[MAX_DEFAULT_HEADER_COLUMNS];
-	   for(int i=0; i<header.length; i++) {
-		   header[i] = ""; //TODO Alphabetical Column Names
+	   for(int i=0; i<26; i++) {
+		   header[i] = COLUMN_NAMES[i];
+		   header[i+26] = COLUMN_NAMES[i] + COLUMN_NAMES[i];
 	   }
 	   return header;
    }
