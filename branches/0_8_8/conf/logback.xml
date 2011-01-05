@@ -16,7 +16,10 @@
 	</appender>
 
    
-   <logger name="org.diffkit.diff.engine.DKDiffEngine">
+   <logger name="org.diffkit.db.DKSqlGenerator">
+      <level value="warn" />
+   </logger>
+   <logger name="org.diffkit.db.DKDatabase">
       <level value="warn" />
    </logger>
    <logger name="org.diffkit.diff.sns.DKSqlPatchSink">
