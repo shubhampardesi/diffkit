@@ -29,10 +29,8 @@ import org.diffkit.common.DKValidate;
  */
 public class DKColumnModel {
 
-   public static final String ROW_NUM_COLUMN_NAME = "<ROW_NUM>";
-
    public enum Type {
-      STRING, INTEGER(true), REAL(true), DECIMAL(true), DATE, TIME, TIMESTAMP, BOOLEAN, TEXT, MIXED;
+      STRING, INTEGER(true), REAL(true), DECIMAL(true), DATE, TIME, TIMESTAMP, BOOLEAN, TEXT;
 
       public final boolean _isNumber;
 
@@ -67,7 +65,6 @@ public class DKColumnModel {
    public final Type _type;
    public final Format _format;
    public final String _formatString;
-   private final boolean _isRowNum;
    private DKTableModel _table;
 
    public DKColumnModel(int index_, String name_, Type type_) {
@@ -81,11 +78,6 @@ public class DKColumnModel {
       _formatString = formatString_;
       _format = this.createFormat(_type, _formatString);
       DKValidate.notNull(_name, _type);
-      _isRowNum = _name.equals(ROW_NUM_COLUMN_NAME);
-   }
-
-   public static DKColumnModel createRowNumColumnModel() {
-      return new DKColumnModel(0, ROW_NUM_COLUMN_NAME, Type.INTEGER);
    }
 
    public void setTable(DKTableModel table_) {
@@ -106,10 +98,6 @@ public class DKColumnModel {
 
    public Type getType() {
       return _type;
-   }
-
-   public boolean isRowNum() {
-      return _isRowNum;
    }
 
    /**
@@ -179,8 +167,6 @@ public class DKColumnModel {
       case BOOLEAN:
          return null;
       case TEXT:
-         return null;
-      case MIXED:
          return null;
 
       default:

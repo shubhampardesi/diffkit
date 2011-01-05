@@ -6,18 +6,23 @@
 http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
 	<bean id="runner" class="org.diffkit.diff.testcase.TestCaseRunner">
-		<constructor-arg index="0" value="27" />
+		<constructor-arg index="0">
+			 <null />
+			<!-- <null /> -->
+			<!-- <list> <value>19</value> </list> -->
+		</constructor-arg>
 		<constructor-arg index="1">
 			<list>
-            <value>HYPERSQL</value>
+            <value>H2</value>
             <!-- 
             <value>ORACLE</value>
             <value>DB2</value>
             <value>HYPERSQL</value>
             <value>SQLSERVER</value>
+            <value>H2</value>
             <value>POSTGRES</value>
             <value>MYSQL</value>
-              -->
+             -->
 			</list>
 		</constructor-arg>
 	</bean>

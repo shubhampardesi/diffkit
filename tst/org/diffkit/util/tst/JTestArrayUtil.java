@@ -25,12 +25,6 @@ import org.diffkit.util.DKArrayUtil;
  */
 public class JTestArrayUtil extends GroovyTestCase {
 
-   public void testRemoveMe() {
-      char var = 'A' + 1;
-      System.out.println("var->" + var);
-      System.out.println("A+B->" + ("" + 'A' + 'B' + '\0' + 'C'));
-   }
-
    public void testIndicesOfIntersection() {
       String[] source = new String[] { "beware", "the", "jabberwocky" };
       String[] target = null;
