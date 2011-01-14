@@ -6,12 +6,14 @@
 	<property name="root.dir" location="." />
 	<property name="src.dir" location="${root.dir}/src" />
 	<property name="tst.dir" location="${root.dir}/tst" />
+	<property name="contrib.dir" location="${root.dir}/contrib" />
 	<property name="lib.dir" location="${root.dir}/lib" />
 	<property name="conf.dir" location="${root.dir}/conf" />
 	<property name="doc.dir" location="${root.dir}/doc" />
 	<property name="web.dir" location="${root.dir}/web" />
 	<property name="build.dir" location="${root.dir}/build" />
 	<property name="unit.build.dir" location="${root.dir}/unit.build" />
+	<property name="contrib.build.dir" location="${root.dir}/contrib.build" />
 	<property name="run.dir" location="${root.dir}/run" />
 	<property name="tstscratch.dir" location="${root.dir}/tstscratch" />
 	<property name="dist.dir" location="${root.dir}/dist" />
@@ -240,11 +242,11 @@
 		</delete>
 
 		<copy file="${conf.dir}/logback.prod.xml" tofile="${dist.dir}/conf/logback.xml" />
-      <copy todir="${dist.dir}/conf">
-         <fileset dir="${conf.dir}">
-            <include name="*dbConnectionInfo*" />
-         </fileset>
-      </copy>
+		<copy todir="${dist.dir}/conf">
+			<fileset dir="${conf.dir}">
+				<include name="*dbConnectionInfo*" />
+			</fileset>
+		</copy>
 
 		<antcall target="doc-dist" />
 		<antcall target="eg-dist" />
@@ -366,15 +368,15 @@
 			<arg line="-a stylesdir=resources" />
 			<arg line="compatibility.txt" />
 		</exec>
-      <exec dir="${dist.dir}/doc" executable="asciidoc" failifexecutionfails="true" searchpath="true">
-         <arg line="-a linkcss" />
-         <arg line="-a theme=diffkit" />
-         <arg line="-a imagesdir=img" />
-         <arg line="-a scriptsdir=resources" />
-         <arg line="-a stylesdir=resources" />
-         <arg line="-a toc" />
-         <arg line="changelog.txt" />
-      </exec>
+		<exec dir="${dist.dir}/doc" executable="asciidoc" failifexecutionfails="true" searchpath="true">
+			<arg line="-a linkcss" />
+			<arg line="-a theme=diffkit" />
+			<arg line="-a imagesdir=img" />
+			<arg line="-a scriptsdir=resources" />
+			<arg line="-a stylesdir=resources" />
+			<arg line="-a toc" />
+			<arg line="changelog.txt" />
+		</exec>
 
 	</target>
 
@@ -492,27 +494,27 @@
 			<arg line="-a stylesdir=resources" />
 			<arg line="compatibility.txt" />
 		</exec>
-		
-      <exec dir="${web-dist.dir}" executable="asciidoc" failifexecutionfails="true" searchpath="true">
-         <arg line="--conf-file=web_template.conf" />
-         <arg line="-a linkcss" />
-         <arg line="-a theme=diffkit" />
-         <arg line="-a imagesdir=img" />
-         <arg line="-a scriptsdir=resources" />
-         <arg line="-a stylesdir=resources" />
-         <arg line="support.txt" />
-      </exec>
-		
-      <exec dir="${web-dist.dir}" executable="asciidoc" failifexecutionfails="true" searchpath="true">
-         <arg line="--conf-file=web_template.conf" />
-         <arg line="-a linkcss" />
-         <arg line="-a theme=diffkit" />
-         <arg line="-a imagesdir=img" />
-         <arg line="-a scriptsdir=resources" />
-         <arg line="-a stylesdir=resources" />
-         <arg line="-a toc" />
-         <arg line="changelog.txt" />
-      </exec>
+
+		<exec dir="${web-dist.dir}" executable="asciidoc" failifexecutionfails="true" searchpath="true">
+			<arg line="--conf-file=web_template.conf" />
+			<arg line="-a linkcss" />
+			<arg line="-a theme=diffkit" />
+			<arg line="-a imagesdir=img" />
+			<arg line="-a scriptsdir=resources" />
+			<arg line="-a stylesdir=resources" />
+			<arg line="support.txt" />
+		</exec>
+
+		<exec dir="${web-dist.dir}" executable="asciidoc" failifexecutionfails="true" searchpath="true">
+			<arg line="--conf-file=web_template.conf" />
+			<arg line="-a linkcss" />
+			<arg line="-a theme=diffkit" />
+			<arg line="-a imagesdir=img" />
+			<arg line="-a scriptsdir=resources" />
+			<arg line="-a stylesdir=resources" />
+			<arg line="-a toc" />
+			<arg line="changelog.txt" />
+		</exec>
 
 	</target>
 
@@ -535,8 +537,8 @@
 				<include name="**/testcase/test13*" />
 				<include name="**/testcase/test14*" />
 				<include name="**/testcase/test18*" />
-            <include name="**/testcase/test21*" />
-            <include name="**/testcase/test26*" />
+				<include name="**/testcase/test21*" />
+				<include name="**/testcase/test26*" />
 				<exclude name="**/testcase/*.h2.db" />
 			</fileset>
 			<filterset>
@@ -546,6 +548,23 @@
 			</filterset>
 			<flattenmapper />
 		</copy>
+
+	</target>
+
+	<target name="build-contrib-jar" depends="build">
+		<mkdir dir="${contrib.build.dir}" />
+		<mkdir dir="${dist.dir}" />
+
+		<javac destdir="${contrib.build.dir}" verbose="off" target="1.5" source="1.5" debug="on" deprecation="off">
+			<compilerarg value="-Xlint" />
+			<classpath>
+				<path refid="lib.classpath" />
+				<pathelement location="${build.dir}" />
+			</classpath>
+			<src path="${contrib.dir}" />
+		</javac>
+
+		<jar destfile="${dist.dir}/diffkit-contrib.jar" basedir="${contrib.build.dir}" />
 
 	</target>
 
@@ -564,6 +583,7 @@
 	<target name="clean">
 		<delete dir="${build.dir}" includeEmptyDirs="true" failonerror="false" />
 		<delete dir="${unit.build.dir}" includeEmptyDirs="true" failonerror="false" />
+		<delete dir="${contrib.build.dir}" includeEmptyDirs="true" failonerror="false" />
 		<delete dir="${run.dir}" includeEmptyDirs="true" failonerror="false" />
 		<delete dir="${dist.dir}" includeEmptyDirs="true" failonerror="false">
 			<exclude name="*.__hold__" />
