@@ -227,7 +227,7 @@
 
 		<copy file="${conf.dir}/logback.prod.xml" tofile="${dist.dir}/conf/logback.xml" />
 		<copy file="${conf.dir}/dist.properties" todir="${dist.dir}/conf/" />
-
+		
 		<!-- create the diffkit standalone application that includes diffkit library 
 			and all its dependencies -->
 		<jar destfile="${dist.dir}/${appjar}" basedir="${dist.dir}">
@@ -247,6 +247,7 @@
 				<include name="*dbConnectionInfo*" />
 			</fileset>
 		</copy>
+      <mkdir dir="${dist.dir}/dropin/" />
 
 		<antcall target="doc-dist" />
 		<antcall target="eg-dist" />
