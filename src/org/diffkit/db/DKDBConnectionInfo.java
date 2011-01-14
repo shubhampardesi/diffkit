@@ -113,7 +113,8 @@ public class DKDBConnectionInfo {
 
    // jdbc:jtds:<server_type>://<server>[:<port>][/<database>][;<property>=<value>[;...]]
    private String getSQLServerUrl() {
-      return String.format("jdbc:jtds:sqlserver://%s:%s/%s", _host, _port, _database);
+      return String.format("jdbc:jtds:sqlserver://%s:%s/%s", _host, _port,
+         _database);
    }
 
    // jdbc:postgresql://<host>[:<port>]/<database_name>
