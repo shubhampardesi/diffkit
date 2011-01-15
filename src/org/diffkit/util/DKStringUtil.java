@@ -17,11 +17,8 @@ package org.diffkit.util;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -36,7 +33,6 @@ import org.diffkit.common.DKValidate;
  * @author jpanico
  */
 public class DKStringUtil {
-
    public enum Quote {
       SINGLE('\''), DOUBLE('"');
 
@@ -46,8 +42,6 @@ public class DKStringUtil {
          _character = character_;
       }
    }
-
-   private static final Pattern UNSIGNED_INTEGER_PATTERN = Pattern.compile("\\d+");
 
    private static final Logger LOG = LoggerFactory.getLogger(DKStringUtil.class);
 
@@ -93,28 +87,6 @@ public class DKStringUtil {
    }
 
    /**
-    * one range only; dash (hyphen) separated
-    */
-   public static List<Integer> parseIntegerRange(String target_) {
-      target_ = StringUtils.trimToNull(target_);
-      if (target_ == null)
-         return null;
-      String[] endPoints = target_.split("-");
-      if ((endPoints == null) || (endPoints.length != 2))
-         throw new RuntimeException(String.format("invalid range string->%s", target_));
-      int start = Integer.parseInt(StringUtils.trimToNull(endPoints[0]));
-      int end = Integer.parseInt(StringUtils.trimToNull(endPoints[1]));
-      if (!(end >= start))
-         throw new RuntimeException(String.format(
-            "end must be >= start in range string->%s", target_));
-
-      List<Integer> list = new ArrayList<Integer>(end - start);
-      for (int i = start; i <= end; i++)
-         list.add(new Integer(i));
-      return list;
-   }
-
-   /**
     * assumes comma separator
     */
    public static List<Integer> parseIntegerList(String target_) {
@@ -125,26 +97,8 @@ public class DKStringUtil {
          return null;
       List<Integer> values = new ArrayList<Integer>(elements.length);
       for (String element : elements)
-         values.add(NumberUtils.createInteger(StringUtils.trimToNull(element)));
+         values.add(NumberUtils.createInteger(element));
       return values;
-   }
-
-   /**
-    * can handle individual values, comma separated lists, and dash (hyphen)
-    * separated ranges <br/>
-    * null safe
-    */
-   public static List<Integer> parseIntegers(String target_) {
-      target_ = StringUtils.trimToNull(target_);
-      if (target_ == null)
-         return null;
-      if (target_.contains(","))
-         return parseIntegerList(target_);
-      else if (target_.contains("-"))
-         return parseIntegerRange(target_);
-      List<Integer> list = new ArrayList<Integer>(1);
-      list.add(Integer.valueOf(target_));
-      return list;
    }
 
    /**
@@ -305,51 +259,5 @@ public class DKStringUtil {
          subs[i] = ((Map.Entry<String, String>) entries[i]).getValue();
       }
       return StringUtils.replaceEach(target_, originals, subs);
-   }
-
-   /**
-    * finds the first streak of numeric characters and converts them into an
-    * Integer. signs (+|-) are ignored
-    * 
-    * @return null if no numeric characters are found in target_
-    */
-   public static Integer extractFirstInteger(String target_) {
-      if (target_ == null)
-         return null;
-      Matcher matcher = UNSIGNED_INTEGER_PATTERN.matcher(target_);
-      if (!matcher.find())
-         return null;
-      String integerString = matcher.group();
-      if (StringUtils.isEmpty(integerString))
-         return null;
-      return Integer.parseInt(integerString);
-   }
-
-   /**
-    * compare Strings by finding the first embedded streak of number chars,
-    * converting those into a Number, and then comparing the Numbers
-    */
-   public static class StringNumberComparator implements Comparator<String> {
-
-      public static final Comparator<String> INSTANCE = new StringNumberComparator();
-
-      private StringNumberComparator() {
-      }
-
-      public int compare(String left_, String right_) {
-         Integer leftInt = extractFirstInteger(left_);
-         Integer righInt = extractFirstInteger(right_);
-         boolean leftNull = (leftInt == null) ? true : false;
-         boolean rightNull = (righInt == null) ? true : false;
-         if (leftNull && rightNull)
-            return 0;
-         else if (leftNull)
-            return -1;
-         else if (rightNull)
-            return 1;
-
-         return leftInt.compareTo(righInt);
-      }
-
    }
 }

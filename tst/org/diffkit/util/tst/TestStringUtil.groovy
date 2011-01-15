@@ -16,7 +16,6 @@ package org.diffkit.util.tst
  * limitations under the License.
  */
 
-
 import groovy.util.GroovyTestCase;
 
 import org.diffkit.db.DKDBFlavor;
@@ -28,44 +27,6 @@ import org.diffkit.util.DKStringUtil;
  * @author jpanico
  */
 public class TestStringUtil extends GroovyTestCase {
-   
-   public void testStringNumberComparator() {
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( null, null) == 0
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( 'aaa', null) == 0
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( null, 'bbb') == 0
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( 'aaa', 'bbb') == 0
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( 'aaa', 'bbb') == 0
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( 'aa15aa', 'bbb') == 1
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( 'aaaa', 'bb15bb') == -1
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( 'aaaa15', 'bb15bb') == 0
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( 'aaaa100', 'bb15bb') == 1
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( 'aaaa-100', 'bb15bb') == 1
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( 'aaaa100', 'bb200bb') == -1
-      assert DKStringUtil.StringNumberComparator.INSTANCE.compare( 'aaaa-100', 'bb200bb') == -1
-   }
-   
-   public void testExtractFirstInteger() {
-      assert ! DKStringUtil.extractFirstInteger(null)
-      assert ! DKStringUtil.extractFirstInteger('asdbef-dasdfa')
-      assert DKStringUtil.extractFirstInteger('asdbef15da25sdfa') == 15
-      assert DKStringUtil.extractFirstInteger('asdbef-015da25sdfa') == 15
-      assert DKStringUtil.extractFirstInteger('15asdbef-0da25sdfa') == 15
-      assert DKStringUtil.extractFirstInteger('sdfa15') == 15
-   }
-   
-   public void testParseIntegers() {
-      assert ! DKStringUtil.parseIntegers(null)
-      assert  DKStringUtil.parseIntegers("1-2") == [1,2]
-      assert  DKStringUtil.parseIntegers(" 0 - 10 ") == [0,1,2,3,4,5,6,7,8,9,10]
-      assert  DKStringUtil.parseIntegers("1,2") == [1,2]
-      assert  DKStringUtil.parseIntegers(" 0, 10 ") == [0,10]
-   }
-   
-   public void testParseIntegerRange() {
-      assert ! DKStringUtil.parseIntegerRange(null)
-      assert  DKStringUtil.parseIntegerRange("1-2") == [1,2]
-      assert  DKStringUtil.parseIntegerRange(" 0 - 10 ") == [0,1,2,3,4,5,6,7,8,9,10]
-   }
    
    public void testParseEnumList() {
       def enumList = DKStringUtil.parseEnumList('ORACLE,DB2,H2', DKDBFlavor)

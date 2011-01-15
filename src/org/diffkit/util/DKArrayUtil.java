@@ -14,9 +14,6 @@ import org.apache.commons.lang.ArrayUtils;
  */
 public class DKArrayUtil {
 
-   private DKArrayUtil() {
-   }
-
    @SuppressWarnings("unchecked")
    public static <T> T[] createArray(Class<T> class_, int capacity_) {
       return (T[]) Array.newInstance(class_, capacity_);

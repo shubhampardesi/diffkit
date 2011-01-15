@@ -32,9 +32,6 @@ public class DKFileUtil {
    private static final String HOLD_SUFFIX = ".__hold__";
    private static final Logger LOG = LoggerFactory.getLogger(DKFileUtil.class);
 
-   private DKFileUtil() {
-   }
-
    /**
     * insert the String prepend_ at the beginning of the content in File target_
     */
@@ -136,14 +133,8 @@ public class DKFileUtil {
    public static void copyFile(File srcFile_, File destFile_,
                                Map<String, String> substitutions_) throws IOException {
       DKValidate.notNull(srcFile_, destFile_);
-      if (MapUtils.isEmpty(substitutions_) || srcFile_.getName().endsWith("jar")
-         || srcFile_.getName().endsWith("xls") || srcFile_.getName().endsWith("xlsx")) {
-         LOG.info("Copying from:" + srcFile_.getAbsolutePath() + " to:"
-            + destFile_.getAbsolutePath());
+      if (MapUtils.isEmpty(substitutions_))
          FileUtils.copyFile(srcFile_, destFile_);
-         return;
-
-      }
 
       String contents = FileUtils.readFileToString(srcFile_);
       contents = DKStringUtil.replaceEach(contents, substitutions_);

@@ -6,15 +6,10 @@ package org.diffkit.util;
 
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-
 /**
  * @author jpanico
  */
 public class DKListUtil {
-
-   private DKListUtil() {
-   }
 
    public static int[] toPrimitiveArray(List<Integer> target_) {
       if (target_ == null)
@@ -25,14 +20,4 @@ public class DKListUtil {
       return array;
    }
 
-   /**
-    * simply returns null if index_ is out of bounds
-    */
-   public static <T> T safeGet(List<T> target_, int index_) {
-      if (CollectionUtils.isEmpty(target_))
-         return null;
-      if (index_ >= target_.size())
-         return null;
-      return target_.get(index_);
-   }
 }
