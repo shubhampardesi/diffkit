@@ -251,6 +251,7 @@ public class DKApplication {
       DKRuntime.getInstance().getUserLog().info(
          "DiffKit home->" + DKRuntime.getInstance().getDiffKitHome());
       loadDropinJars();
+      DKRuntime.getInstance().getUserLog().info("\n");
    }
 
    private static void configureLogging() {
